@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Formulir Penilaian Kepraktisan Media</title>
+
+  <!-- Font opsional, bisa dihapus jika ingin benar-benar mandiri -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- jsPDF dan AutoTable untuk PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --accent: #22c55e;
+      --bg: #f3f4f6;
+      --text: #111827;
+      --border: #e5e7eb;
+      --muted: #6b7280;
+      --danger: #dc2626;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 6px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #eff6ff, #e5e7eb);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow:
+        0 20px 40px rgba(15, 23, 42, 0.15),
+        0 0 0 1px rgba(148, 163, 184, 0.3);
+      padding: 20px 18px 24px;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        padding: 24px 28px 30px;
+      }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.4);
+    }
+
+    header.main-header {
+      text-align: center;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    header.main-header h1 {
+      font-size: 18px;
+      line-height: 1.4;
+      font-weight: 600;
+      margin: 0 0 6px;
+    }
+
+    @media (min-width: 768px) {
+      header.main-header h1 {
+        font-size: 20px;
+      }
+    }
+
+    header.main-header .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.8fr);
+      gap: 10px 16px;
+      margin: 16px 0 10px;
+      font-size: 13px;
+    }
+
+    .meta-label {
+      font-weight: 500;
+      color: var(--muted);
+      min-width: 130px;
+    }
+
+    .meta-value {
+      font-weight: 500;
+    }
+
+    .pill {
+      display: inline-flex;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      font-size: 11px;
+      color: var(--muted);
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--primary);
+    }
+
+    .section {
+      margin-top: 18px;
+      padding: 14px 14px 16px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: radial-gradient(circle at top left, #f9fafb, #ffffff);
+      position: relative;
+    }
+
+    @media (min-width: 768px) {
+      .section {
+        padding: 16px 18px 18px;
+      }
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .section-title h2 {
+      font-size: 15px;
+      margin: 0;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title h2 span.icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .section-title .step-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .section-body p {
+      margin: 4px 0;
+      font-size: 13px;
+      color: #4b5563;
+    }
+
+    .section-body small {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px 16px;
+      margin-top: 8px;
+    }
+
+    @media (min-width: 640px) {
+      .form-row.two-col {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13px;
+    }
+
+    .form-group label {
+      font-weight: 500;
+      color: #111827;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .form-group label span.req {
+      color: var(--danger);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    textarea,
+    select {
+      border-radius: var(--radius-sm);
+      border: 1px solid #d1d5db;
+      padding: 7px 9px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      background: #f9fafb;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+      background: #ffffff;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .helper {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.08s ease, opacity 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, var(--primary), var(--primary-dark));
+      color: #ffffff;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-0.5px);
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0.5px) scale(0.99);
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-outline {
+      background: #f9fafb;
+      color: #111827;
+      border: 1px solid #d1d5db;
+    }
+
+    .btn-outline:hover {
+      background: #ffffff;
+    }
+
+    .btn-success {
+      background: linear-gradient(to right, #16a34a, #22c55e);
+      color: #ffffff;
+      box-shadow: 0 10px 20px rgba(34, 197, 94, 0.35);
+    }
+
+    .btn-success:hover {
+      transform: translateY(-0.5px);
+      box-shadow: 0 10px 24px rgba(34, 197, 94, 0.4);
+    }
+
+    .btn-success:active {
+      transform: translateY(0.5px) scale(0.99);
+      box-shadow: 0 6px 14px rgba(34, 197, 94, 0.3);
+    }
+
+    .btn[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-icon {
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .status-pill {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #f97316;
+    }
+
+    .status-pill-dot.ok {
+      background: #22c55e;
+    }
+
+    .section.disabled {
+      pointer-events: none;
+      opacity: 0.4;
+      position: relative;
+    }
+
+    .section.disabled::after {
+      content: "Lengkapi identitas siswa terlebih dahulu";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      background: radial-gradient(circle at center, rgba(243, 244, 246, 0.96), rgba(229, 231, 235, 0.88));
+      border-radius: inherit;
+      text-align: center;
+      padding: 0 24px;
+    }
+
+    .table-wrapper {
+      margin-top: 10px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: #f9fafb;
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+      font-size: 12px;
+    }
+
+    thead tr {
+      background: #eff6ff;
+    }
+
+    th,
+    td {
+      border: 1px solid #d1d5db;
+      padding: 6px 6px;
+      vertical-align: middle;
+    }
+
+    th {
+      font-weight: 600;
+      text-align: center;
+    }
+
+    td.kriteria {
+      text-align: left;
+    }
+
+    td.aspect-label {
+      font-weight: 600;
+      background: #f9fafb;
+      min-width: 150px;
+    }
+
+    td.radio-cell {
+      text-align: center;
+      width: 40px;
+    }
+
+    .radio-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    input[type="radio"] {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+
+    .legend-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-mark {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 2px solid #d1d5db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 500;
+      color: #4b5563;
+    }
+
+    .legend-desc {
+      font-size: 11px;
+    }
+
+    .score-summary {
+      margin-top: 12px;
+      padding: 8px 10px;
+      border-radius: var(--radius-md);
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      font-size: 12px;
+      color: #166534;
+    }
+
+    .score-summary span.label {
+      font-weight: 600;
+    }
+
+    .score-summary small {
+      display: block;
+      color: #16a34a;
+      margin-top: 4px;
+      font-size: 11px;
+    }
+
+    .signature-section {
+      margin-top: 18px;
+      padding-top: 12px;
+      border-top: 1px dashed #e5e7eb;
+    }
+
+    .signature-card {
+      margin-top: 8px;
+      padding: 10px 10px 12px;
+      border-radius: var(--radius-md);
+      border: 1px dashed #cbd5f5;
+      background: #f9fafb;
+    }
+
+    .signature-card h3 {
+      font-size: 14px;
+      margin: 0 0 6px;
+      font-weight: 600;
+    }
+
+    .signature-card p {
+      font-size: 12px;
+      margin: 0 0 6px;
+      color: var(--muted);
+    }
+
+    .signature-wrapper {
+      border-radius: var(--radius-md);
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .signature-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 8px;
+      background: #f3f4f6;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .signature-toolbar strong {
+      color: #111827;
+    }
+
+    .signature-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    canvas#signature-canvas {
+      width: 100%;
+      height: 180px;
+      display: block;
+      touch-action: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        #ffffff 0px,
+        #ffffff 14px,
+        #f9fafb 14px,
+        #f9fafb 16px
+      );
+    }
+
+    @media (min-width: 768px) {
+      canvas#signature-canvas {
+        height: 220px;
+      }
+    }
+
+    .pdf-section {
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px dashed #e5e7eb;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .pdf-section span.badge-ready {
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #dcfce7;
+      color: #166534;
+      font-size: 11px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pdf-section span.badge-ready-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #16a34a;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .error-text {
+      font-size: 11px;
+      color: var(--danger);
+      margin-top: 4px;
+    }
+  </style>
+
+</head>
+<body>
+  <div class="container">
+    <span class="badge">
+      <span class="badge-dot"></span>
+      Formulir Penilaian Kepraktisan Media
+    </span>
+
+    <header class="main-header">
+      <h1>LEMBAR ANGKET PENILAIAN KEPRAKTISAN MEDIA E-LKPD INTERAKTIF TERINTEGRASI LABORATORIUM VIRTUAL 3D OLEH SISWA</h1>
+      <p class="subtitle">
+        Instrumen ini digunakan untuk menganalisis respon siswa terhadap kepraktisan media
+        E-LKPD Interaktif Terintegrasi Laboratorium Virtual 3D pada materi suhu, kalor, dan pemuaian.
+      </p>
+    </header>
+
+    <section class="section" id="meta-section">
+      <div class="section-title">
+        <h2>
+          <span class="icon">ℹ</span>
+          Informasi Penelitian
+        </h2>
+        <span class="step-label">Informasi tetap</span>
+      </div>
+      <div class="section-body">
+        <div class="meta-grid">
+          <div>
+            <div class="meta-row">
+              <span class="meta-label">Judul penelitian</span>
+              <span class="meta-value">
+                Pengembangan E-LKPD Interaktif Materi Suhu, Kalor, dan Pemuaian Terintegrasi Laboratorium Virtual 3D
+                untuk Meningkatkan Kemampuan Computational Thinking Siswa
+              </span>
+            </div>
+          </div>
+          <div>
+            <div class="meta-row">
+              <span class="meta-label">Peneliti</span>
+              <span class="meta-value">Bunaya Hanif Wintribrata</span>
+            </div>
+            <div class="meta-row" style="margin-top:6px;">
+              <span class="meta-label">Tahun</span>
+              <span class="meta-value">
+                <span class="pill">
+                  <span class="pill-dot"></span>
+                  2025
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+        <p><strong>Tujuan</strong></p>
+        <p>
+          Instrumen ini digunakan untuk menganalisis respon siswa terhadap kepraktisan media E-LKPD Interaktif
+          Terintegrasi Laboratorium Virtual 3D pada materi suhu, kalor, dan pemuaian.
+        </p>
+        <p style="margin-top:8px;"><strong>Petunjuk pengisian</strong></p>
+        <p>
+          Mohon kamu berkenan memberikan penilaian atas media E-LKPD Interaktif Terintegrasi Laboratorium Virtual 3D
+          yang telah digunakan.
+          Berikan skor dengan memberi tanda centang pada kolom STS, TS, S, atau SS untuk setiap pernyataan.
+        </p>
+        <p style="margin-top:6px;"><strong>Keterangan</strong></p>
+        <p style="font-size:12px;">
+          STS = Sangat Tidak Setuju, TS = Tidak Setuju, S = Setuju, SS = Sangat Setuju.
+          Pada perhitungan skor, STS = 1, TS = 2, S = 3, SS = 4.
+        </p>
+      </div>
+    </section>
+
+    <!-- FORM IDENTITAS SISWA -->
+    <section class="section" id="identitas-section">
+      <div class="section-title">
+        <h2>
+          <span class="icon">1</span>
+          Identitas Siswa
+        </h2>
+        <span class="step-label">Wajib diisi terlebih dahulu</span>
+      </div>
+      <div class="section-body">
+        <p>Isi data diri terlebih dahulu. Setelah disimpan, formulir penilaian akan terbuka.</p>
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label for="nama-siswa">
+              Nama
+              <span class="req">*</span>
+            </label>
+            <input type="text" id="nama-siswa" placeholder="Tulis nama lengkap kamu" />
+          </div>
+          <div class="form-group">
+            <label for="kelas-siswa">
+              Kelas
+              <span class="req">*</span>
+            </label>
+            <input type="text" id="kelas-siswa" placeholder="Contoh: VIII A" />
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label for="sekolah-siswa">
+              Asal Sekolah
+              <span class="req">*</span>
+            </label>
+            <input type="text" id="sekolah-siswa" placeholder="Tulis nama sekolah" />
+          </div>
+          <div class="form-group">
+            <label for="tanggal-isi">
+              Tanggal
+              <span class="req">*</span>
+            </label>
+            <input type="date" id="tanggal-isi" />
+            <div class="helper">Tanggal kamu mengisi angket</div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btn-simpan-identitas">
+            <span class="btn-icon">💾</span>
+            Simpan identitas
+          </button>
+          <span class="status-pill" id="status-identitas">
+            <span class="status-pill-dot"></span>
+            Identitas belum tersimpan
+          </span>
+        </div>
+        <div id="identitas-error" class="error-text hidden">
+          Mohon lengkapi semua kolom identitas.
+        </div>
+      </div>
+    </section>
+
+    <!-- FORM PENILAIAN KEPRAKTISAN -->
+    <section class="section disabled" id="penilaian-section">
+      <div class="section-title">
+        <h2>
+          <span class="icon">2</span>
+          Formulir Penilaian Kepraktisan Media
+        </h2>
+        <span class="step-label">Penilaian kepraktisan media</span>
+      </div>
+      <div class="section-body">
+        <p>
+          Berikan penilaian sesuai pengalaman kamu menggunakan E-LKPD Interaktif Terintegrasi Laboratorium Virtual 3D.
+        </p>
+        <div class="legend-box">
+          <div class="legend-item">
+            <span class="legend-mark">STS</span>
+            <span class="legend-desc">Sangat Tidak Setuju (skor 1)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-mark">TS</span>
+            <span class="legend-desc">Tidak Setuju (skor 2)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-mark">S</span>
+            <span class="legend-desc">Setuju (skor 3)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-mark">SS</span>
+            <span class="legend-desc">Sangat Setuju (skor 4)</span>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <div class="table-scroll">
+            <table id="tabel-penilaian">
+              <thead>
+                <tr>
+                  <th style="width: 180px;">Aspek yang Dinilai</th>
+                  <th>Pernyataan</th>
+                  <th style="width: 52px;">STS</th>
+                  <th style="width: 52px;">TS</th>
+                  <th style="width: 52px;">S</th>
+                  <th style="width: 52px;">SS</th>
+                </tr>
+              </thead>
+              <tbody id="penilaian-body">
+                <!-- baris diisi dengan JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="penilaian-error" class="error-text hidden">
+          Masih ada pernyataan yang belum kamu beri nilai.
+        </div>
+
+        <!-- Pertanyaan terbuka: kelebihan -->
+        <div class="form-row" style="margin-top:12px;">
+          <div class="form-group">
+            <label for="kelebihan">
+              Menurut Anda, apa saja kelebihan E-LKPD interaktif terintegrasi laboratorium virtual 3D yang telah Anda gunakan?
+            </label>
+            <textarea id="kelebihan" placeholder="Tulis pendapat Anda tentang kelebihan E-LKPD."></textarea>
+          </div>
+        </div>
+
+        <!-- Pertanyaan terbuka: kelemahan -->
+        <div class="form-row" style="margin-top:12px;">
+          <div class="form-group">
+            <label for="kelemahan">
+              Menurut Anda, apa saja kelemahan E-LKPD interaktif terintegrasi laboratorium virtual 3D yang telah Anda gunakan?
+            </label>
+            <textarea id="kelemahan" placeholder="Tulis pendapat Anda tentang kelemahan E-LKPD."></textarea>
+          </div>
+        </div>
+
+        <!-- Saran dan komentar (jika diperlukan) -->
+        <div class="form-row" style="margin-top:12px;">
+          <div class="form-group">
+            <label for="saran-komentar">
+              Saran dan Komentar (jika diperlukan)
+            </label>
+            <textarea id="saran-komentar" placeholder="Tulis saran dan komentar Anda jika ada."></textarea>
+          </div>
+        </div>
+
+        <div class="form-row" style="margin-top:12px;">
+          <div class="form-group">
+            <label>
+              Kesimpulan penilaian kepraktisan media
+              <span class="req">*</span>
+            </label>
+            <div class="helper" style="margin-bottom:6px;">
+              Pilih satu kesimpulan yang paling sesuai dengan penilaian kamu.
+            </div>
+            <div>
+              <label style="display:flex;align-items:flex-start;gap:6px;font-weight:400;margin-bottom:4px;font-size:13px;">
+                <input type="radio" name="kesimpulan" value="1" style="margin-top:2px;" />
+                <span>Seluruh aspek kepraktisan media telah terpenuhi secara lengkap sesuai kriteria yang ditetapkan.</span>
+              </label>
+              <label style="display:flex;align-items:flex-start;gap:6px;font-weight:400;margin-bottom:4px;font-size:13px;">
+                <input type="radio" name="kesimpulan" value="2" style="margin-top:2px;" />
+                <span>Sebagian besar aspek kepraktisan media telah terpenuhi, namun masih terdapat beberapa aspek yang perlu disempurnakan.</span>
+              </label>
+              <label style="display:flex;align-items:flex-start;gap:6px;font-weight:400;font-size:13px;">
+                <input type="radio" name="kesimpulan" value="3" style="margin-top:2px;" />
+                <span>Sebagian besar aspek kepraktisan media belum terpenuhi, sehingga diperlukan pengembangan lebih lanjut sebelum digunakan dalam pembelajaran.</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div id="kesimpulan-error" class="error-text hidden">
+          Pilih salah satu kesimpulan.
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btn-simpan-penilaian">
+            <span class="btn-icon">✅</span>
+            Simpan penilaian
+          </button>
+          <span class="status-pill" id="status-penilaian">
+            <span class="status-pill-dot"></span>
+            Penilaian belum disimpan
+          </span>
+        </div>
+
+        <div id="rekap-skor" class="score-summary hidden">
+          <span class="label">Rekap skor sementara.</span>
+          <div id="rekap-skor-text"></div>
+          <small>Rekap ini akan dimasukkan ke dalam file PDF.</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- TANDA TANGAN DAN DOWNLOAD PDF -->
+    <section class="section hidden" id="ttd-section">
+      <div class="section-title">
+        <h2>
+          <span class="icon">3</span>
+          Tanda Tangan dan Unduh PDF
+        </h2>
+        <span class="step-label">Validasi akhir</span>
+      </div>
+      <div class="section-body signature-section">
+        <div class="signature-card">
+          <h3>Tanda tangan langsung</h3>
+          <p>
+            Tanda tangan ini akan dimasukkan ke dalam kolom TTD di file PDF.
+            Gunakan jari atau stylus di layar handphone.
+          </p>
+          <div class="signature-wrapper">
+            <div class="signature-toolbar">
+              <span><strong>Bidang tanda tangan</strong> • Sentuh dan geser untuk menulis</span>
+              <div class="signature-actions">
+                <button type="button" class="btn btn-outline" id="btn-bersihkan-ttd" style="padding:3px 9px;font-size:11px;">
+                  Bersihkan
+                </button>
+                <button type="button" class="btn btn-success" id="btn-simpan-ttd" style="padding:3px 9px;font-size:11px;">
+                  Simpan tanda tangan
+                </button>
+              </div>
+            </div>
+            <canvas id="signature-canvas"></canvas>
+          </div>
+          <div id="ttd-error" class="error-text hidden">
+            Buat tanda tangan terlebih dahulu sebelum disimpan.
+          </div>
+          <div id="ttd-status" class="helper" style="margin-top:6px;">
+            Status: tanda tangan belum disimpan.
+          </div>
+        </div>
+
+        <div class="pdf-section">
+          <div>
+            <div>Setelah tanda tangan disimpan, kamu dapat mengunduh file PDF hasil penilaian kepraktisan media.</div>
+            <div id="pdf-info" style="margin-top:4px;">
+              PDF akan memuat identitas kamu, semua tabel penilaian, rekap skor, jawaban pertanyaan terbuka,
+              saran dan komentar, kesimpulan, dan kolom tanda tangan:
+              <br />
+              “Semarang, [tanggal] 2025, Validator, TTD, (Nama terang)”.
+            </div>
+          </div>
+          <div class="btn-row" style="margin-top:0;">
+            <span id="pdf-ready-badge" class="hidden badge-ready">
+              <span class="badge-ready-dot"></span>
+              PDF siap diunduh
+            </span>
+            <button class="btn btn-primary" id="btn-download-pdf" disabled>
+              <span class="btn-icon">⬇️</span>
+              Download PDF
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Data aspek dan butir kriteria (disesuaikan dengan angket kepraktisan)
+    const aspekList = [
+      {
+        id: "content",
+        label: "Content (Konten/Isi)",
+        items: [
+          "1. Saya mudah memahami isi dan penjelasan dalam E-LKPD.",
+          "2. Materi dalam E-LKPD sesuai dengan topik pelajaran IPA.",
+          "3. Gambar, tabel, atau contoh dalam E-LKPD membantu saya memahami materi.",
+          "4. Kegiatan dalam E-LKPD sesuai dengan tujuan pembelajaran."
+        ]
+      },
+      {
+        id: "accuracy",
+        label: "Accuracy (Ketepatan/Keakuratan)",
+        items: [
+          "5. Informasi dalam E-LKPD benar dan tidak membingungkan.",
+          "6. Simulasi laboratorium virtual menampilkan peristiwa IPA dengan tepat.",
+          "7. Rumus, perhitungan, dan hasil simulasi sudah benar.",
+          "8. Jawaban atau hasil dari sistem sesuai dengan konsep yang dipelajari."
+        ]
+      },
+      {
+        id: "format",
+        label: "Format (Format Penyajian)",
+        items: [
+          "9. Tampilan E-LKPD menarik dan enak dilihat.",
+          "10. Warna dan tulisan mudah dibaca.",
+          "11. Letak gambar, tulisan, dan menu tertata rapi.",
+          "12. Gambar dan animasi terlihat jelas dan berkualitas baik.",
+          "13. Saya mudah menemukan menu atau tombol yang dibutuhkan."
+        ]
+      },
+      {
+        id: "usefulness",
+        label: "Usefulness (Kemanfaatan)",
+        items: [
+          "14. E-LKPD membantu saya memahami konsep suhu, kalor, dan pemuaian.",
+          "15. Laboratorium virtual membantu saya bereksperimen dengan aman.",
+          "16. E-LKPD melatih saya berpikir logis dan sistematis.",
+          "17. E-LKPD membantu saya belajar sendiri di rumah.",
+          "18. Media ini membuat saya lebih semangat belajar."
+        ]
+      },
+      {
+        id: "ease_of_use",
+        label: "Ease of Use (Kemudahan Penggunaan)",
+        items: [
+          "19. E-LKPD mudah digunakan tanpa bantuan guru.",
+          "20. Petunjuk penggunaan E-LKPD jelas dan mudah dipahami.",
+          "21. Laboratorium virtual mudah dijalankan.",
+          "22. Saya tidak mengalami kesulitan saat menggunakan E-LKPD."
+        ]
+      },
+      {
+        id: "timeliness",
+        label: "Timeliness (Ketepatan Waktu)",
+        items: [
+          "23. E-LKPD dapat dibuka dengan cepat tanpa loading lama.",
+          "24. Simulasi laboratorium berjalan lancar tanpa gangguan.",
+          "25. E-LKPD memberi umpan balik dengan cepat.",
+          "26. Waktu untuk menyelesaikan aktivitas sudah cukup.",
+          "27. E-LKPD bisa digunakan kapan saja sesuai kebutuhan saya."
+        ]
+      },
+      {
+        id: "user_satisfaction",
+        label: "User Satisfaction (Kepuasan Pengguna)",
+        items: [
+          "28. Saya merasa senang belajar dengan E-LKPD ini.",
+          "29. E-LKPD membuat pelajaran IPA menjadi lebih menarik.",
+          "30. Saya akan merekomendasikan E-LKPD ini ke teman saya.",
+          "31. Saya ingin menggunakan E-LKPD serupa untuk pelajaran lain.",
+          "32. Secara keseluruhan, E-LKPD ini sesuai dengan harapan saya."
+        ]
+      }
+    ];
+
+    // Menyimpan identitas, rekap skor, dan tanda tangan
+    let formIdentitas = null;
+    let rekapSkor = {};
+    let totalSkor = 0;
+    let totalSkorMaks = 0;
+    let kesimpulanText = "";
+    let kelebihanText = "";
+    let kelemahanText = "";
+    let saranText = "";
+    let signatureDataUrl = null;
+    let isSignatureDrawn = false;
+
+    // Elemen utama
+    const identitasSection = document.getElementById("identitas-section");
+    const penilaianSection = document.getElementById("penilaian-section");
+    const ttdSection = document.getElementById("ttd-section");
+
+    const btnSimpanIdentitas = document.getElementById("btn-simpan-identitas");
+    const statusIdentitas = document.getElementById("status-identitas");
+    const identitasError = document.getElementById("identitas-error");
+
+    const penilaianBody = document.getElementById("penilaian-body");
+    const btnSimpanPenilaian = document.getElementById("btn-simpan-penilaian");
+    const statusPenilaian = document.getElementById("status-penilaian");
+    const penilaianError = document.getElementById("penilaian-error");
+    const kesimpulanError = document.getElementById("kesimpulan-error");
+    const rekapSkorBox = document.getElementById("rekap-skor");
+    const rekapSkorText = document.getElementById("rekap-skor-text");
+
+    const btnBersihkanTTD = document.getElementById("btn-bersihkan-ttd");
+    const btnSimpanTTD = document.getElementById("btn-simpan-ttd");
+    const ttdError = document.getElementById("ttd-error");
+    const ttdStatus = document.getElementById("ttd-status");
+    const btnDownloadPDF = document.getElementById("btn-download-pdf");
+    const pdfReadyBadge = document.getElementById("pdf-ready-badge");
+
+    const canvas = document.getElementById("signature-canvas");
+    const ctx = canvas.getContext("2d");
+
+    // Inisialisasi tabel penilaian dari data
+    function buildTable() {
+      aspekList.forEach(aspek => {
+        aspek.items.forEach((item, index) => {
+          const tr = document.createElement("tr");
+
+          if (index === 0) {
+            const tdAspek = document.createElement("td");
+            tdAspek.className = "aspect-label";
+            tdAspek.textContent = aspek.label;
+            tdAspek.rowSpan = aspek.items.length;
+            tr.appendChild(tdAspek);
+          }
+
+          const tdKriteria = document.createElement("td");
+          tdKriteria.className = "kriteria";
+          tdKriteria.textContent = item;
+          tr.appendChild(tdKriteria);
+
+          for (let value = 1; value <= 4; value++) {
+            const tdRadio = document.createElement("td");
+            tdRadio.className = "radio-cell";
+            const wrapper = document.createElement("div");
+            wrapper.className = "radio-wrapper";
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.value = value;
+            radio.name = `${aspek.id}_${index + 1}`;
+            radio.dataset.aspek = aspek.id;
+            radio.dataset.labelAspek = aspek.label;
+            wrapper.appendChild(radio);
+            tdRadio.appendChild(wrapper);
+            tr.appendChild(tdRadio);
+          }
+
+          penilaianBody.appendChild(tr);
+        });
+      });
+    }
+
+    // Format tanggal Indonesia
+    function formatTanggalIndo(iso) {
+      if (!iso) return "";
+      const parts = iso.split("-");
+      if (parts.length !== 3) return iso;
+      const tahun = parts[0];
+      const bulanIdx = parseInt(parts[1], 10) - 1;
+      const hari = parseInt(parts[2], 10);
+      const namaBulan = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+      ];
+      const bulan = namaBulan[bulanIdx] || parts[1];
+      return `${hari} ${bulan} ${tahun}`;
+    }
+
+    // Simpan identitas
+    btnSimpanIdentitas.addEventListener("click", () => {
+      const nama = document.getElementById("nama-siswa").value.trim();
+      const kelas = document.getElementById("kelas-siswa").value.trim();
+      const sekolah = document.getElementById("sekolah-siswa").value.trim();
+      const tanggal = document.getElementById("tanggal-isi").value;
+
+      if (!nama || !kelas || !sekolah || !tanggal) {
+        identitasError.classList.remove("hidden");
+        return;
+      }
+
+      identitasError.classList.add("hidden");
+
+      formIdentitas = { nama, kelas, sekolah, tanggal };
+
+      statusIdentitas.innerHTML =
+        '<span class="status-pill-dot ok"></span> Identitas tersimpan. Kamu bisa mengisi penilaian.';
+      penilaianSection.classList.remove("disabled");
+
+      penilaianSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    // Validasi semua butir penilaian sudah diisi
+    function validateAllRatings() {
+      const groupNames = new Set();
+      const radios = penilaianBody.querySelectorAll("input[type='radio']");
+      radios.forEach(r => groupNames.add(r.name));
+
+      for (const name of groupNames) {
+        const checked = penilaianBody.querySelector(`input[name='${name}']:checked`);
+        if (!checked) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    // Hitung skor per aspek dan total
+    function hitungSkor() {
+      rekapSkor = {};
+      totalSkor = 0;
+      totalSkorMaks = 0;
+
+      aspekList.forEach(aspek => {
+        const jumlahButir = aspek.items.length;
+        let skorAspek = 0;
+
+        aspek.items.forEach((_, index) => {
+          const groupName = `${aspek.id}_${index + 1}`;
+          const checked = document.querySelector(`input[name='${groupName}']:checked`);
+          if (checked) {
+            const nilai = parseInt(checked.value, 10) || 0;
+            skorAspek += nilai;
+          }
+        });
+
+        const skorMaksAspek = jumlahButir * 4;
+        totalSkor += skorAspek;
+        totalSkorMaks += skorMaksAspek;
+
+        rekapSkor[aspek.id] = {
+          label: aspek.label,
+          jumlahButir,
+          skor: skorAspek,
+          skorMaks: skorMaksAspek
+        };
+      });
+    }
+
+    // Simpan penilaian
+    btnSimpanPenilaian.addEventListener("click", () => {
+      if (!formIdentitas) {
+        alert("Lengkapi identitas siswa terlebih dahulu.");
+        identitasSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+
+      const semuaTerisi = validateAllRatings();
+      if (!semuaTerisi) {
+        penilaianError.classList.remove("hidden");
+        return;
+      } else {
+        penilaianError.classList.add("hidden");
+      }
+
+      const kesimpulanRadio = document.querySelector("input[name='kesimpulan']:checked");
+      if (!kesimpulanRadio) {
+        kesimpulanError.classList.remove("hidden");
+        return;
+      } else {
+        kesimpulanError.classList.add("hidden");
+      }
+
+      const kesimpulanMap = {
+        "1": "Seluruh aspek kepraktisan media telah terpenuhi secara lengkap sesuai kriteria yang ditetapkan.",
+        "2": "Sebagian besar aspek kepraktisan media telah terpenuhi, namun masih terdapat beberapa aspek yang perlu disempurnakan.",
+        "3": "Sebagian besar aspek kepraktisan media belum terpenuhi, sehingga diperlukan pengembangan lebih lanjut sebelum digunakan dalam pembelajaran."
+      };
+      kesimpulanText = kesimpulanMap[kesimpulanRadio.value] || "";
+
+      kelebihanText = document.getElementById("kelebihan").value.trim();
+      kelemahanText = document.getElementById("kelemahan").value.trim();
+      saranText = document.getElementById("saran-komentar").value.trim();
+
+      hitungSkor();
+
+      let lines = [];
+      for (const key of Object.keys(rekapSkor)) {
+        const r = rekapSkor[key];
+        lines.push(`${r.label}: ${r.skor} dari ${r.skorMaks} (butir: ${r.jumlahButir})`);
+      }
+      lines.push(`Total keseluruhan: ${totalSkor} dari ${totalSkorMaks}.`);
+      rekapSkorText.innerHTML = lines.join("<br />");
+      rekapSkorBox.classList.remove("hidden");
+
+      statusPenilaian.innerHTML =
+        '<span class="status-pill-dot ok"></span> Penilaian tersimpan. Lanjutkan ke tanda tangan.';
+      ttdSection.classList.remove("hidden");
+      initCanvas();
+
+      ttdSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    // Inisialisasi kanvas tanda tangan
+    function initCanvas() {
+      const devicePixelRatio = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * devicePixelRatio;
+      canvas.height = rect.height * devicePixelRatio;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(devicePixelRatio, devicePixelRatio);
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "#111827";
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, rect.width, rect.height);
+    }
+
+    let drawing = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    function startDrawing(x, y) {
+      drawing = true;
+      lastX = x;
+      lastY = y;
+      isSignatureDrawn = true;
+    }
+
+    function drawLine(x, y) {
+      if (!drawing) return;
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      lastX = x;
+      lastY = y;
+    }
+
+    function stopDrawing() {
+      drawing = false;
+    }
+
+    // Event mouse
+    canvas.addEventListener("mousedown", e => {
+      const rect = canvas.getBoundingClientRect();
+      startDrawing(e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    canvas.addEventListener("mousemove", e => {
+      const rect = canvas.getBoundingClientRect();
+      drawLine(e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    canvas.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("mouseleave", stopDrawing);
+
+    // Event sentuh
+    canvas.addEventListener("touchstart", e => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      startDrawing(touch.clientX - rect.left, touch.clientY - rect.top);
+    });
+
+    canvas.addEventListener("touchmove", e => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      drawLine(touch.clientX - rect.left, touch.clientY - rect.top);
+    });
+
+    canvas.addEventListener("touchend", e => {
+      e.preventDefault();
+      stopDrawing();
+    });
+
+    // Bersihkan tanda tangan
+    btnBersihkanTTD.addEventListener("click", () => {
+      const rect = canvas.getBoundingClientRect();
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, rect.width, rect.height);
+      isSignatureDrawn = false;
+      signatureDataUrl = null;
+      ttdStatus.textContent = "Status: tanda tangan belum disimpan.";
+      ttdError.classList.add("hidden");
+      btnDownloadPDF.disabled = true;
+      pdfReadyBadge.classList.add("hidden");
+    });
+
+    // Simpan tanda tangan
+    btnSimpanTTD.addEventListener("click", () => {
+      if (!isSignatureDrawn) {
+        ttdError.classList.remove("hidden");
+        return;
+      }
+      ttdError.classList.add("hidden");
+      signatureDataUrl = canvas.toDataURL("image/png");
+
+      ttdStatus.textContent = "Status: tanda tangan tersimpan. Kamu bisa mengunduh PDF.";
+      btnDownloadPDF.disabled = false;
+      pdfReadyBadge.classList.remove("hidden");
+    });
+
+    // Generate dan download PDF
+    btnDownloadPDF.addEventListener("click", () => {
+      if (!formIdentitas) {
+        alert("Identitas belum tersimpan.");
+        return;
+      }
+      if (!signatureDataUrl) {
+        alert("Tanda tangan belum disimpan.");
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: "mm", format: "a4" });
+      const margin = 15;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      let y = margin;
+
+      function ensureSpace(neededHeight) {
+        if (y + neededHeight > pageHeight - margin) {
+          doc.addPage();
+          y = margin;
+        }
+      }
+
+      // Judul utama
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      const judulUtama =
+        "LEMBAR ANGKET PENILAIAN KEPRAKTISAN MEDIA E-LKPD INTERAKTIF TERINTEGRASI LABORATORIUM VIRTUAL 3D OLEH SISWA";
+      const judulUtamaLines = doc.splitTextToSize(judulUtama, 180);
+      const judulUtamaHeight = judulUtamaLines.length * 5 + 2;
+      ensureSpace(judulUtamaHeight);
+      doc.text(judulUtamaLines, pageWidth / 2, y, { align: "center" });
+      y += judulUtamaHeight;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+
+      // Judul penelitian
+      const judul =
+        "Pengembangan E-LKPD Interaktif Materi Suhu, Kalor, dan Pemuaian Terintegrasi Laboratorium Virtual 3D untuk Meningkatkan Kemampuan Computational Thinking Siswa";
+      const maxJudulWidth = pageWidth - margin * 2 - 36; // margin kiri + label "Judul penelitian :"
+
+// pecah judul sesuai lebar maksimal
+const judulLines = doc.splitTextToSize(judul, maxJudulWidth);
+const judulHeight = judulLines.length * 4 + 4;
+
+ensureSpace(judulHeight + 25);
+doc.text("Judul penelitian :", margin, y);
+doc.text(judulLines, margin + 36, y);
+y += judulHeight;
+
+      // Identitas
+      ensureSpace(25);
+      doc.text("Peneliti :", margin, y);
+      doc.text("Bunaya Hanif Wintribrata", margin + 36, y);
+      y += 6;
+
+      doc.text("Nama :", margin, y);
+      doc.text(formIdentitas.nama, margin + 36, y);
+      y += 5;
+
+      doc.text("Kelas :", margin, y);
+      doc.text(formIdentitas.kelas, margin + 36, y);
+      y += 5;
+
+      doc.text("Asal Sekolah :", margin, y);
+      doc.text(formIdentitas.sekolah, margin + 36, y);
+      y += 5;
+
+      doc.text("Tanggal :", margin, y);
+      const tglIndo = formatTanggalIndo(formIdentitas.tanggal);
+      doc.text(tglIndo, margin + 36, y);
+      y += 8;
+
+      // Tujuan
+      const tujuanText =
+        "Instrumen ini digunakan untuk menganalisis respon siswa terhadap kepraktisan media E-LKPD Interaktif Terintegrasi Laboratorium Virtual 3D pada materi suhu, kalor, dan pemuaian.";
+      const tujuanLines = doc.splitTextToSize(tujuanText, 180);
+      const tujuanHeight = tujuanLines.length * 4 + 4;
+      ensureSpace(5 + tujuanHeight);
+      doc.setFont("helvetica", "bold");
+      doc.text("Tujuan", margin, y);
+      y += 5;
+      doc.setFont("helvetica", "normal");
+      doc.text(tujuanLines, margin, y);
+      y += tujuanHeight;
+
+      // Petunjuk
+      const petunjukText =
+        "Mohon siswa berkenan memberikan penilaian atas media E-LKPD Interaktif Terintegrasi Laboratorium Virtual 3D yang telah digunakan. Berikan skor dengan memberikan tanda centang pada kolom STS, TS, S, atau SS untuk setiap pernyataan.";
+      const petunjukLines = doc.splitTextToSize(petunjukText, 180);
+      const petunjukHeight = petunjukLines.length * 4 + 4;
+      ensureSpace(5 + petunjukHeight + 8);
+      doc.setFont("helvetica", "bold");
+      doc.text("Petunjuk", margin, y);
+      y += 5;
+      doc.setFont("helvetica", "normal");
+      doc.text(petunjukLines, margin, y);
+      y += petunjukHeight;
+
+      doc.setFontSize(9);
+      ensureSpace(6);
+      doc.text("Keterangan: STS = 1, TS = 2, S = 3, SS = 4.", margin, y);
+      y += 6;
+
+      // Tabel penilaian
+      const tableHead = [["Aspek yang Dinilai", "Pernyataan", "STS", "TS", "S", "SS"]];
+      const tableBody = [];
+
+      aspekList.forEach(aspek => {
+        aspek.items.forEach((item, idx) => {
+          const groupName = `${aspek.id}_${idx + 1}`;
+          const checked = document.querySelector(`input[name='${groupName}']:checked`);
+          const marks = ["", "", "", ""];
+          if (checked) {
+            const v = parseInt(checked.value, 10);
+            if (v >= 1 && v <= 4) {
+              marks[v - 1] = "✓";
+            }
+          }
+          tableBody.push([
+            idx === 0 ? aspek.label : "",
+            item,
+            marks[0],
+            marks[1],
+            marks[2],
+            marks[3]
+          ]);
+        });
+      });
+
+      doc.autoTable({
+        startY: y,
+        head: tableHead,
+        body: tableBody,
+        styles: { fontSize: 8, cellPadding: 1.5 },
+        headStyles: { fillColor: [239, 246, 255], textColor: 0 },
+        columnStyles: {
+          0: { cellWidth: 40 },
+          1: { cellWidth: 88 },
+          2: { cellWidth: 10, halign: "center" },
+          3: { cellWidth: 10, halign: "center" },
+          4: { cellWidth: 10, halign: "center" },
+          5: { cellWidth: 10, halign: "center" }
+        }
+      });
+
+      y = doc.lastAutoTable.finalY + 6;
+
+      // Tabel rekap skor
+      const rekapHead = [["Aspek", "Jumlah Butir", "Skor Maksimal", "Skor Diperoleh"]];
+      const rekapBody = [];
+
+      Object.keys(rekapSkor).forEach(key => {
+        const r = rekapSkor[key];
+        rekapBody.push([
+          r.label,
+          String(r.jumlahButir),
+          String(r.skorMaks),
+          String(r.skor)
+        ]);
+      });
+
+      rekapBody.push(["Total", "", String(totalSkorMaks), String(totalSkor)]);
+
+      doc.autoTable({
+        startY: y,
+        head: rekapHead,
+        body: rekapBody,
+        styles: { fontSize: 9, cellPadding: 1.5 },
+        headStyles: { fillColor: [209, 250, 229], textColor: 0 },
+        columnStyles: {
+          0: { cellWidth: 86 },
+          1: { cellWidth: 22, halign: "center" },
+          2: { cellWidth: 28, halign: "center" },
+          3: { cellWidth: 28, halign: "center" }
+        }
+      });
+
+      y = doc.lastAutoTable.finalY + 8;
+      doc.setFontSize(10);
+
+      // Pertanyaan terbuka
+      doc.setFont("helvetica", "bold");
+      ensureSpace(10);
+      doc.text("Pertanyaan Terbuka", margin, y);
+      y += 5;
+      doc.setFont("helvetica", "normal");
+
+      const q1 = "Menurut Anda, apa saja kelebihan E-LKPD interaktif terintegrasi laboratorium virtual 3D yang telah Anda gunakan?";
+      const q1Lines = doc.splitTextToSize(q1, 180);
+      const q1Height = q1Lines.length * 4 + 2;
+      ensureSpace(q1Height);
+      doc.text(q1Lines, margin, y);
+      y += q1Height;
+
+      const ans1 = kelebihanText || "-";
+      const ans1Lines = doc.splitTextToSize(ans1, 180);
+      const ans1Height = ans1Lines.length * 4 + 4;
+      ensureSpace(ans1Height);
+      doc.text(ans1Lines, margin, y);
+      y += ans1Height;
+
+      const q2 = "Menurut Anda, apa saja kelemahan E-LKPD interaktif terintegrasi laboratorium virtual 3D yang telah Anda gunakan?";
+      const q2Lines = doc.splitTextToSize(q2, 180);
+      const q2Height = q2Lines.length * 4 + 2;
+      ensureSpace(q2Height);
+      doc.text(q2Lines, margin, y);
+      y += q2Height;
+
+      const ans2 = kelemahanText || "-";
+      const ans2Lines = doc.splitTextToSize(ans2, 180);
+      const ans2Height = ans2Lines.length * 4 + 4;
+      ensureSpace(ans2Height);
+      doc.text(ans2Lines, margin, y);
+      y += ans2Height;
+
+      // Saran dan komentar
+      doc.setFont("helvetica", "bold");
+      ensureSpace(10);
+      doc.text("Saran dan Komentar (jika diperlukan)", margin, y);
+      y += 5;
+      doc.setFont("helvetica", "normal");
+
+      if (saranText) {
+        const saranLines = doc.splitTextToSize(saranText, 180);
+        const saranHeight = saranLines.length * 4 + 4;
+        ensureSpace(saranHeight);
+        doc.text(saranLines, margin, y);
+        y += saranHeight;
+      } else {
+        ensureSpace(6);
+        doc.text("-", margin, y);
+        y += 6;
+      }
+
+      // Kesimpulan
+      doc.setFont("helvetica", "bold");
+      ensureSpace(10);
+      doc.text("Kesimpulan", margin, y);
+      y += 5;
+      doc.setFont("helvetica", "normal");
+      const kesimpulanLines = doc.splitTextToSize(kesimpulanText, 180);
+      const kesimpulanHeight = kesimpulanLines.length * 4 + 4;
+      ensureSpace(kesimpulanHeight + 40);
+      doc.text(kesimpulanLines, margin, y);
+      y += kesimpulanHeight + 4;
+
+      // Blok tanda tangan
+      const blockTtdHeight = 40;
+      ensureSpace(blockTtdHeight);
+
+      const tglTTD = formatTanggalIndo(formIdentitas.tanggal);
+      const teksTanggal = `Semarang, ${tglTTD}`;
+      doc.text(teksTanggal, pageWidth - margin, y, { align: "right" });
+      y += 6;
+
+      doc.text("Validator", pageWidth - margin, y, { align: "right" });
+      y += 4;
+
+      const sigWidth = 50;
+      const sigHeight = 25;
+      const sigX = pageWidth - margin - sigWidth;
+      const sigYImg = y + 2;
+      doc.addImage(signatureDataUrl, "PNG", sigX, sigYImg, sigWidth, sigHeight);
+      y = sigYImg + sigHeight + 6;
+
+      doc.text(`(${formIdentitas.nama})`, pageWidth - margin, y, { align: "right" });
+
+      doc.save(`Penilaian_Kepraktisan_${formIdentitas.nama || "siswa"}.pdf`);
+    });
+
+    // Inisialisasi awal
+    document.addEventListener("DOMContentLoaded", () => {
+      buildTable();
+      window.addEventListener("resize", () => {
+        if (!isSignatureDrawn && !ttdSection.classList.contains("hidden")) {
+          initCanvas();
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
